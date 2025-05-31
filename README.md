@@ -1,4 +1,4 @@
-# GitLab MCP Server
+# Assistant MCP Server
 
 ### Features
 
