@@ -1,15 +1,15 @@
 {
-  "name": "@modelcontextprotocol/server-gitlab",
-  "version": "0.6.2",
-  "description": "MCP server for using the GitLab API",
+  "name": "mcp-assistant",
+  "version": "0.0.1",
+  "description": "MCP server",
+  "author": "nodlab",
   "license": "MIT",
-  "author": "GitLab, PBC (https://gitlab.com)",
-  "homepage": "https://modelcontextprotocol.io",
-  "bugs": "https://github.com/modelcontextprotocol/servers/issues",
-  "type": "module",
-  "bin": {
-    "mcp-server-gitlab": "dist/index.js"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodlab/mcp-assistant"
   },
+  "bugs": "https://github.com/nodlab/mcp-assistant/issues",
+  "type": "module",
   "files": [
     "dist"
   ],
