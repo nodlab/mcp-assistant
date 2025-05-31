@@ -21,8 +21,8 @@ import {
 import { base64ToUtf8 } from "./src/utils.js";
 
 const server = new Server({
-  name: "gitlab-mcp-server",
-  version: "0.5.1",
+  name: "assistant-mcp-server",
+  version: "0.0.1",
 }, {
   capabilities: {
     tools: {}
@@ -149,6 +149,7 @@ async function searchAsanaTasks(query: string, user_workspace_gid: string) {
 }
 
 async function getArchitectureInfo () {
+  // it's temporary url, only for test
   const url = new URL(`${GITLAB_API_URL}/projects/254/repository/files/doc%2Fdevelopment%2Farchitecture.md?ref=main`);
 
   try {
