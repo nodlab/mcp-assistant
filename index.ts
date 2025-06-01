@@ -10,13 +10,11 @@ import {
 import fetch from "node-fetch";
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import fs from 'fs';
 import {
-  GitLabSearchResponseSchema,
-  SearchRepositoriesSchema,
-  type GitLabSearchResponse,
-  GetMyAsanaTasksSchema,
-  SearchTasksSchema,
   ArchitectureInfo,
+  TasksInfo,
+  TaskSolution,
 } from './schemas.js';
 import { base64ToUtf8 } from "./src/utils.js";
 
@@ -44,103 +42,10 @@ if (!ASANA_ACCESS_TOKEN) {
   process.exit(1);
 }
 
-async function searchGitLabProjects(
-  query: string,
-  page: number = 1,
-  perPage: number = 20
-): Promise<GitLabSearchResponse> {
-  const url = new URL(`${GITLAB_API_URL}/projects`);
-  url.searchParams.append("search", query);
-  url.searchParams.append("page", page.toString());
-  url.searchParams.append("per_page", perPage.toString());
-
-  const response = await fetch(url.toString(), {
-    headers: {
-      "Authorization": `Bearer ${GITLAB_PERSONAL_ACCESS_TOKEN}`
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`GitLab API error: ${response.statusText}`);
-  }
-
-  const projects = await response.json();
-  return GitLabSearchResponseSchema.parse({
-    count: parseInt(response.headers.get("X-Total") || "0"),
-    items: projects
-  });
-}
-
-async function getAsanaMe () {
-  const urlMe = new URL(`${ASANA_API_URL}/users/me`);
-  const responseMe = await fetch(urlMe.toString(), {
-    method: 'GET',
-    headers: {
-      "Authorization": `Bearer ${ASANA_ACCESS_TOKEN}`
-    }
-  });
-  // @ts-ignore
-  const { data } = await responseMe.json();
-
-  return data;
-}
-
-async function searchMyTasks(user_gid: string, user_workspace_gid: string) {
+async function searchTask() {
   try {
-    const asanaUrl = new URL(`${ASANA_API_URL}/tasks`);
-    asanaUrl.searchParams.append("assignee", user_gid);
-    asanaUrl.searchParams.append("workspace", user_workspace_gid);
-    asanaUrl.searchParams.append("completed_since", 'now');
-    asanaUrl.searchParams.append("opt_fields", 'name,completed,due_on,projects.name,notes');
+    const data = fs.readFileSync('./public/asana.txt', 'utf8');
 
-    const asanaTasks = await fetch(asanaUrl.toString(), {
-      method: 'GET',
-      headers: {
-        "Authorization": `Bearer ${ASANA_ACCESS_TOKEN}`
-      }
-    });
-
-    // @ts-ignore
-    const { data: tasks } = await asanaTasks.json();
-
-    for (const task of tasks) {
-      const storiesUrl = new URL(`${ASANA_API_URL}/tasks/${task.gid}/stories`);
-      storiesUrl.searchParams.append("opt_fields", 'type,text,created_at,created_by.name');
-      const storiesRequest = await fetch(storiesUrl.toString(), {
-        method: 'GET',
-        headers: {
-          "Authorization": `Bearer ${ASANA_ACCESS_TOKEN}`
-        }
-      });
-      // @ts-ignore
-      const response = await storiesRequest.json();
-      // @ts-ignore
-      console.log('taskHistory!!:', response.data);
-      // @ts-ignore
-      task.taskHistory = response.data;
-    }
-
-    return tasks;
-  } catch (error) {
-    // @ts-ignore
-    console.error('Ошибка при получении задач:', error.response?.data || error.message);
-  }
-}
-
-async function searchAsanaTasks(query: string, user_workspace_gid: string) {
-  try {
-    const url = new URL(`${ASANA_API_URL}/workspaces/${user_workspace_gid}/tasks/search`);
-    url.searchParams.append("text", query);
-
-    const asanaTasks = await fetch(url.toString(), {
-      method: 'GET',
-      headers: {
-        "Authorization": `Bearer ${ASANA_ACCESS_TOKEN}`
-      }
-    });
-
-    // @ts-ignore
-    const { data } = await asanaTasks.json();
     return data;
   } catch (error) {
     // @ts-ignore
@@ -178,29 +83,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
-        name: "search_repositories",
-        description: "Search for GitLab projects",
-        inputSchema: zodToJsonSchema(SearchRepositoriesSchema)
-      },
-      {
-        name: "get_info_about_me",
-        description: "Get info about me into Asans",
-        inputSchema: zodToJsonSchema(SearchTasksSchema)
-      },
-      {
-        name: "search_my_tasks",
-        description: "Search my Asans tasks",
-        inputSchema: zodToJsonSchema(GetMyAsanaTasksSchema)
-      },
-      {
-        name: "search_tasks",
-        description: "Search Asans tasks",
-        inputSchema: zodToJsonSchema(SearchTasksSchema)
-      },
-      {
         name: "architecture_info",
         description: `You should prepare a summary and only the most important points that are described in the architecture. `,
         inputSchema: zodToJsonSchema(ArchitectureInfo)
+      },
+      {
+        name: "search_tasks",
+        description: `You must call this function before 'task_solution' to get complete information about tasks in projects. 
+        You have to find the task the user is talking about and put together a work plan`,
+        inputSchema: zodToJsonSchema(TasksInfo)
+      },
+      {
+        name: "task_solution",
+        description: `
+        You have to get information about active tasks from 'tasks_info', find the task the user is talking about.
+        You should also get information about project rules, architecture and other rules in 'architecture_info'.
+        After that you should analyze what should be done in the task and implement in the project taking into account code-style, architecture and other development rules.
+        `,
+        inputSchema: zodToJsonSchema(TaskSolution)
       }
     ]
   };
@@ -213,29 +113,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     switch (request.params.name) {
-      case "search_repositories": {
-        const args = SearchRepositoriesSchema.parse(request.params.arguments);
-        const results = await searchGitLabProjects(args.search, args.page, args.per_page);
-        return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
-      }
-      case "get_info_about_me": {
-        const results = await getAsanaMe();
-        return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
-      }
-      case "search_my_tasks": {
-        const args = GetMyAsanaTasksSchema.parse(request.params.arguments);
-        const results = await searchMyTasks(args.user_gid, args.user_workspace_gid);
-        return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
-      }
       case "search_tasks": {
-        const args = SearchTasksSchema.parse(request.params.arguments);
-        const results = await searchAsanaTasks(args.search, args.user_workspace_gid);
+        // const args = SearchTasksSchema.parse(request.params.arguments);
+        const results = await searchTask();
         return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
       }
       case "architecture_info": {
         // const args = ArchitectureInfo.parse(request.params.arguments);
         const results = await getArchitectureInfo();
         return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
+      }
+      case "task_solution": {
+        // const args = TasksInfo.parse(request.params.arguments);
+        // const results = await getArchitectureInfo();
+        // return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
       }
       default:
         throw new Error(`Unknown tool: ${request.params.name}`);

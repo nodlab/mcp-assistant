@@ -265,6 +265,12 @@ export const SearchTasksSchema = z.object({
 export const ArchitectureInfo = z.object({
 });
 
+export const TasksInfo = z.object({
+});
+
+export const TaskSolution = z.object({
+});
+
 export const CreateRepositorySchema = z.object({
   name: z.string().describe("Repository name"),
   description: z.string().optional().describe("Repository description"),
