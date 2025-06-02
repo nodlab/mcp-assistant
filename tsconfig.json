@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "outDir": "./dist",
-      "rootDir": ".",
+      "rootDir": "./src",
       "target": "ES2022",
       "module": "Node16",
       "moduleResolution": "Node16",
@@ -11,9 +11,7 @@
       "forceConsistentCasingInFileNames": true,
       "resolveJsonModule": true
     },
-    "include": [
-      "./**/*.ts"
-    ],
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
   }
   

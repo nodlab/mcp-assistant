@@ -13,10 +13,9 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import fs from 'fs';
 import {
   ArchitectureInfo,
-  TasksInfo,
-  TaskSolution,
+  TasksInfo
 } from './schemas.js';
-import { base64ToUtf8 } from "./src/utils.js";
+import { base64ToUtf8 } from "./utils.js";
 
 const server = new Server({
   name: "assistant-mcp-server",
