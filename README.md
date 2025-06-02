@@ -15,21 +15,25 @@ yarn build
 ```
 
 <details>
-  <summary>Connecting to a local server</summary>
+  <summary>Connecting to a local server</summary>  
 
-	> We recommend specifying the *-local suffix if you are also using the npm package @nodlab/mcp-assistant
 
-	```json
-	{
-		"mcpServers": {
-			"mcp-assistant-local": {
-				"command": "npx",
-				"args": ["tsx", "/path/to/folder/mcp-assistant/src/index.ts"],
-				"env": {}
-			}
-		}
-	}
-	```
+```json
+{
+  "mcpServers": {
+    "mcp-assistant-local": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "/path/to/folder/mcp-assistant/src/index.ts"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+> We recommend specifying the *-local suffix if you are also using the npm package @nodlab/mcp-assistant
 </details>
 
 ## License
