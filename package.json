@@ -9,6 +9,11 @@
     "url": "git+https://github.com/nodlab/mcp-assistant"
   },
   "bugs": "https://github.com/nodlab/mcp-assistant/issues",
+  "keywords": [
+    "modelcontextprotocol",
+    "mcp",
+    "assistant"
+  ],
   "type": "module",
   "files": [
     "dist"
@@ -23,8 +28,6 @@
     "@types/node-fetch": "^2.6.12",
     "dotenv": "^16.5.0",
     "fetch": "^1.1.0",
-    "from": "^0.1.7",
-    "import": "^0.0.6",
     "node-fetch": "^3.3.2",
     "remark": "^15.0.1",
     "zod-to-json-schema": "^3.23.5"

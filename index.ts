@@ -29,16 +29,9 @@ const server = new Server({
 
 const GITLAB_PERSONAL_ACCESS_TOKEN = process.env.GITLAB_PERSONAL_ACCESS_TOKEN;
 const GITLAB_API_URL = process.env.GITLAB_API_URL || 'https://gitlab.com/api/v4';
-const ASANA_API_URL = process.env.ASANA_API_URL;
-const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN;
 
 if (!GITLAB_PERSONAL_ACCESS_TOKEN) {
   console.error("GITLAB_PERSONAL_ACCESS_TOKEN environment variable is not set");
-  process.exit(1);
-}
-
-if (!ASANA_ACCESS_TOKEN) {
-  console.error("ASANA_ACCESS_TOKEN environment variable is not set");
   process.exit(1);
 }
 
@@ -84,23 +77,16 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "architecture_info",
-        description: `You should prepare a summary and only the most important points that are described in the architecture. `,
+        description: `Obtaining mandatory information about the architecture of frontend application projects
+        `,
         inputSchema: zodToJsonSchema(ArchitectureInfo)
       },
       {
         name: "search_tasks",
-        description: `You must call this function before 'task_solution' to get complete information about tasks in projects. 
-        You have to find the task the user is talking about and put together a work plan`,
+        description: `Before executing this function, you must retrieve the project architecture information from 'architecture_info'. This is mandatory information and you must respect it.
+After that you need to find the task you are talking about, analyze what needs to be done and implement it in the project according to the architecture and requirements. 
+You don't need to invent anything additional from yourself, just what is required`,
         inputSchema: zodToJsonSchema(TasksInfo)
-      },
-      {
-        name: "task_solution",
-        description: `
-        You have to get information about active tasks from 'tasks_info', find the task the user is talking about.
-        You should also get information about project rules, architecture and other rules in 'architecture_info'.
-        After that you should analyze what should be done in the task and implement in the project taking into account code-style, architecture and other development rules.
-        `,
-        inputSchema: zodToJsonSchema(TaskSolution)
       }
     ]
   };
@@ -123,11 +109,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const results = await getArchitectureInfo();
         return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
       }
-      case "task_solution": {
-        // const args = TasksInfo.parse(request.params.arguments);
-        // const results = await getArchitectureInfo();
-        // return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
-      }
       default:
         throw new Error(`Unknown tool: ${request.params.name}`);
     }
@@ -143,7 +124,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function runServer() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("GitLab MCP Server running on stdio");
+  console.error("Assistant MCP Server running on stdio");
 }
 
 runServer().catch((error) => {
