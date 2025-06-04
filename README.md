@@ -8,34 +8,34 @@ After cloning the repository, run the command to install the dependencies:
 yarn install
 ```
 
-It is also necessary to add a tools.json file, example:
+You should also add the **tools.json** file to the root of the project, for example:
 
 ```json
 {
-	"tools": [
-		{
-			"name": "architecture_info",
-			"description": "Obtaining mandatory information about the architecture of frontend application projects",
-			"inputSchema": {},
-			"plugin": {
-				"type": "file",
-				"args": {
-					"path": "/path/to/folder/public/tasks.txt"
-				}
-			}
-		},
-		{
-			"name": "search_tasks",
-			"description": "Before executing this function, you must retrieve the project architecture information from 'architecture_info'. This is mandatory information and you must respect it. After that you need to find the task you are talking about, analyze what needs to be done and implement it in the project according to the architecture and requirements. You don't need to invent anything additional from yourself, just what is required",
-			"inputSchema": {},
-			"plugin": {
-				"type": "file",
-				"args": {
-					"path": "/path/to/folder/public/architecture.md"
-				}
-			}
-		}
-	]
+  "tools": [
+    {
+      "name": "architecture_info",
+      "description": "Obtaining mandatory information about the architecture of frontend application projects",
+      "inputSchema": {},
+      "plugin": {
+        "type": "file",
+        "args": {
+          "path": "/path/to/folder/public/tasks.txt"
+        }
+      }
+    },
+    {
+      "name": "search_tasks",
+      "description": "Before executing this function, you must retrieve the project architecture information from 'architecture_info'. This is mandatory information and you must respect it. After that you need to find the task you are talking about, analyze what needs to be done and implement it in the project according to the architecture and requirements. You don't need to invent anything additional from yourself, just what is required",
+      "inputSchema": {},
+      "plugin": {
+        "type": "file",
+        "args": {
+          "path": "/path/to/folder/public/architecture.md"
+        }
+      }
+    }
+  ]
 }
 ```
 
@@ -49,19 +49,22 @@ yarn build
   <summary>Connecting to a local server</summary>  
 
 
-	```json
-	{
-		"mcpServers": {
-			"mcp-assistant-local": {
-				"command": "npx",
-				"args": ["tsx", "/path/to/folder/mcp-assistant/src/index.ts"],
-				"env": {
-					"TOOLS_PATH": "/path/to/folder/tools.json"
-				}
-			}
-		}
-	}
-	```
+```json
+{
+  "mcpServers": {
+    "mcp-assistant-local": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "/path/to/folder/src/index.ts"
+      ],
+      "env": {
+        "TOOLS_PATH": "/path/to/folder/tools.json"
+      }
+    }
+  }
+}
+```
 </details>
 
 ## License
