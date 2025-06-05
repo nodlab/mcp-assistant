@@ -18,7 +18,7 @@ You should also add the **tools.json** file to the root of the project, for exam
       "description": "Obtaining mandatory information about the architecture of frontend application projects",
       "inputSchema": {},
       "plugin": {
-        "type": "file",
+        "name": "file",
         "args": {
           "path": "/path/to/folder/public/tasks.txt"
         }
@@ -29,7 +29,7 @@ You should also add the **tools.json** file to the root of the project, for exam
       "description": "Before executing this function, you must retrieve the project architecture information from 'architecture_info'. This is mandatory information and you must respect it. After that you need to find the task you are talking about, analyze what needs to be done and implement it in the project according to the architecture and requirements. You don't need to invent anything additional from yourself, just what is required",
       "inputSchema": {},
       "plugin": {
-        "type": "file",
+        "name": "file",
         "args": {
           "path": "/path/to/folder/public/architecture.md"
         }
