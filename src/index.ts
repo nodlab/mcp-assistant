@@ -9,7 +9,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from 'zod';
 import { getToolByName, getTools } from './lib/tools.js';
-import loadFile from './lib/plugins/file.plugin.js';
+import loadFile from './plugins/file.plugin.js';
 
 const server = new Server({
   name: "assistant-mcp-server",
