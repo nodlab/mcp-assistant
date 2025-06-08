@@ -20,7 +20,7 @@ You should also add the **tools.json** file to the root of the project, for exam
       "plugin": {
         "name": "file",
         "args": {
-          "path": "/path/to/folder/public/tasks.txt"
+          "path": "/path/to/folder/public/architecture.md"
         }
       }
     },
@@ -31,7 +31,7 @@ You should also add the **tools.json** file to the root of the project, for exam
       "plugin": {
         "name": "file",
         "args": {
-          "path": "/path/to/folder/public/architecture.md"
+          "path": "/path/to/folder/public/tasks.txt"
         }
       }
     }
