@@ -34,7 +34,33 @@ You should also add the **tools.json** file to the root of the project, for exam
           "path": "/path/to/folder/public/tasks.txt"
         }
       }
-    }
+    },
+    {
+        "name": "optimize_prompt",
+        "description": "Generates a final, structured prompt for the AI model based on the provided context sections and instructions. This tool should be called after all relevant data has been collected. The result is intended to be used as the FINAL prompt for the AI. Clients must use the returned prompt as the input for the AI model.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" }
+                },
+                "required": ["title", "content"]
+              }
+            },
+            "instructions": { "type": "string" }
+          },
+          "required": ["sections"]
+        },
+        "plugin": {
+          "name": "promptOptimizer",
+          "args": {}
+        }
+      }
   ]
 }
 ```
